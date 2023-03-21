@@ -42,8 +42,6 @@ const verifyJWT = (req, res, next) => {
         .send({ message: "Access to this route is forbidden" });
     }
     req.decoded = decoded;
-    // console.log('decoded ', decoded);
-    // console.log('Auth header ', authHeader);
     next();
   });
 };
@@ -87,9 +85,8 @@ const run = async () => {
       res.send(services);
     });
 
-    // warning
     // displaying added appointment
-    // this is irregular informal way to
+
     app.get("/available", async (req, res) => {
       const date = req.query.date; // || 'May 19, 2022';
 
@@ -101,20 +98,6 @@ const run = async () => {
       const appointmentBookings = await bookingsCollection
         .find(query)
         .toArray();
-
-      // step:3: displaying slotTime for avaiable booking
-      // services?.forEach((service) => {
-      // const serviceBookings = appointmentBookings.filter(
-      //   (booking) => booking?.treatment === service?.title
-      // );
-      // console.log(serviceBookings);
-      // const booked = serviceBookings?.map((s) => s?.patientSlotTime);
-      // service.booked = booked;
-      // const availableSlotTime = service?.slots?.filter(
-      //   (serve) => !booked?.includes(serve)
-      // );
-      // service.availableSlotTime = availableSlotTime;
-      // });
 
       // step:3: displaying slotTime for avaiable booking
       services?.forEach((service) => {
@@ -247,9 +230,9 @@ const run = async () => {
       const email = req.params.email;
       const user = req.body;
       const filter = { email: email };
-      // this option instructs the method to create a document if no documents match the filter
+
       const options = { upsert: true };
-      // create a document that sets the plot of the movie
+      // create a document that sets the plot
       const updateUser = {
         $set: user,
       };
@@ -273,11 +256,6 @@ const run = async () => {
     // using verifyJWT as middleware
     app.put("/user/admin/:email", verifyJWT, verifyAdmin, async (req, res) => {
       const email = req.params.email;
-      // const requestedEmail = req.decoded.email;
-      // const requestedAccount = await usersCollection.findOne({
-      //   email: requestedEmail,
-      // });
-      // if (requestedAccount?.role === 'admin') {
       const filter = { email: email };
       // this option instructs the method to create a document if no documents match the filter
       // const options = { upsert: true }; // here user is updated to be admin and no new user data is inserting that's why this is commented
@@ -289,11 +267,6 @@ const run = async () => {
       const adminsResult = await usersCollection.updateOne(filter, makeAdmin);
 
       res.send(adminsResult);
-      // } else {
-      //   res
-      //     .status(403)
-      //     .send({ message: 'Access to the this route is forbidden' });
-      // }
     });
 
     // removing adminRole for from users to admins
@@ -304,17 +277,11 @@ const run = async () => {
       verifyAdmin,
       async (req, res) => {
         const email = req.params.email;
-        // const requestedEmail = req.decoded.email;
-        // const requestedAccount = await usersCollection.findOne({
-        //   email: requestedEmail,
-        // });
-        // if (requestedAccount?.role === 'admin') {
+
         const filter = {
           email: email,
         };
-        // this option instructs the method to create a document if no documents match the filter
-        // const options = { upsert: true }; // here user is updated to be admin and no new user data is inserting that's why this is commented
-        // create a document that sets the plot of the movie
+
         const removeAdmin = {
           $set: {
             role: "user",
@@ -327,11 +294,6 @@ const run = async () => {
         );
 
         res.send(adminsResult);
-        // } else {
-        //   res
-        //     .status(403)
-        //     .send({ message: 'Access to the this route is forbidden' });
-        // }
       }
     );
 
